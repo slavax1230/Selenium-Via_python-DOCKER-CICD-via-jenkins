@@ -1,39 +1,26 @@
-# Use an official Python runtime as a parent image
-FROM python:3.8-slim
+FROM --platform=linux/amd64 python:3.9-buster
 
-# Set environment variables for non-interactive mode
-ENV DEBIAN_FRONTEND=noninteractive
+# install google chrome
 
-# Install necessary packages
-RUN apt-get update && apt-get install -y \
-    wget \
-    unzip \
-    curl \
-    gnupg \
-    && apt-get clean
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
 
-# Install Google Chrome
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
-    && apt-get update \
-    && apt-get install -y google-chrome-stable \
-    && apt-get clean
+RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
 
-# Download and install ChromeDriver
-RUN CHROME_DRIVER_VERSION=`curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE` \
-    && wget -q -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip \
-    && unzip /tmp/chromedriver.zip -d /usr/local/bin \
-    && rm /tmp/chromedriver.zip
+RUN apt-get -y update
 
-# Set up a working directory
-WORKDIR /app
+RUN apt-get install -y google-chrome-stable
 
-# Install Python dependencies
-COPY . /app/
-RUN pip install Selenium
 
-# Copy your Selenium Python script into the container
-COPY . /app
+# set display port to avoid crash
 
-# Run your Selenium script when the container starts
-#CMD ["python", "main.py"]
+ENV DISPLAY=:99
+
+# install selenium
+
+RUN pip install selenium==4.3.0
+
+COPY . .
+
+COPY chromedriver /usr/local/bin/
+
+CMD python main.py

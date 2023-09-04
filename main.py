@@ -7,10 +7,13 @@ import time
 
 options = Options()
 options.add_experimental_option("detach", True)
+options.add_argument("--no-sandbox")
+options.add_argument("--headless")
+options.add_argument("--disable-dev-shm-usage")
 
-CHROME_DRIVER_PATH = "/app/webdriver"
-SERVICE = Service(CHROME_DRIVER_PATH)
-DRIVER = webdriver.Chrome(service=SERVICE,options=options)
+CHROME_DRIVER_PATH = "/app/chromedriver"
+#SERVICE = Service(CHROME_DRIVER_PATH)
+DRIVER = webdriver.Chrome(options=options)
 
 class Getinfo:
     def getTitle(self):
