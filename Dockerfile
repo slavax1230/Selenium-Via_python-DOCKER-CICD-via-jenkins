@@ -29,11 +29,11 @@ RUN CHROME_DRIVER_VERSION=`curl -sS https://chromedriver.storage.googleapis.com/
 WORKDIR /app
 
 # Install Python dependencies
-COPY requirements.txt /app/
-RUN pip install --no-cache-dir -r requirements.txt
+COPY . /app/
+RUN pip install Selenium
 
 # Copy your Selenium Python script into the container
-COPY . .
+COPY . /app
 
 # Run your Selenium script when the container starts
-CMD ["python", "main.py"]
+#CMD ["python", "main.py"]

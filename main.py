@@ -8,7 +8,7 @@ import time
 options = Options()
 options.add_experimental_option("detach", True)
 
-CHROME_DRIVER_PATH = r"C:\Users\NITO\OneDrive\TCB\devops\HM4.9\Selenium-Via_python-DOCKER-CICD-via-jenkins\driv\chromedriver.exe"
+CHROME_DRIVER_PATH = "/app/webdriver"
 SERVICE = Service(CHROME_DRIVER_PATH)
 DRIVER = webdriver.Chrome(service=SERVICE,options=options)
 
