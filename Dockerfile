@@ -1,23 +1,39 @@
-FROM jenkins/jenkins:lts
+# Use an official Python runtime as a parent image
+FROM python:3.8-slim
 
-USER root
+# Set environment variables for non-interactive mode
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Install necessary packages, including Python 3
+# Install necessary packages
 RUN apt-get update && apt-get install -y \
-    lsb-release \
-    python3 \
-    python3-pip  # (Optional: Install pip for Python 3)
+    wget \
+    unzip \
+    curl \
+    gnupg \
+    && apt-get clean
 
-# Install Docker prerequisites
-RUN curl -fsSLo /usr/share/keyrings/docker-archive-keyring.asc \
-  https://download.docker.com/linux/debian/gpg
-RUN echo "deb [arch=$(dpkg --print-architecture) \
-  signed-by=/usr/share/keyrings/docker-archive-keyring.asc] \
-  https://download.docker.com/linux/debian \
-  $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
-RUN apt-get update && apt-get install -y docker-ce-cli
+# Install Google Chrome
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable \
+    && apt-get clean
 
-USER jenkins
+# Download and install ChromeDriver
+RUN CHROME_DRIVER_VERSION=`curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE` \
+    && wget -q -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip \
+    && unzip /tmp/chromedriver.zip -d /usr/local/bin \
+    && rm /tmp/chromedriver.zip
 
-# Install Jenkins plugins
-RUN jenkins-plugin-cli --plugins "blueocean:1.25.3 docker-workflow:1.28"
+# Set up a working directory
+WORKDIR /app
+
+# Install Python dependencies
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy your Selenium Python script into the container
+COPY . .
+
+# Run your Selenium script when the container starts
+CMD ["python", "main.py"]
