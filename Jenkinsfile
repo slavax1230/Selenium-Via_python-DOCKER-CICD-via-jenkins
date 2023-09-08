@@ -12,15 +12,14 @@ pipeline {
             steps {
                 echo "Building.."
                 sh '''
-                pip install fire       
+                pip install -r requirements.txt       
                 '''
             }
         }
         stage('Test') {
             steps {
                 echo "Testing.."
-                sh '''     
-                pip install fire              
+                sh '''                   
                 python3 hello.py
                 python3 hello.py --name=my-name-is
                 '''
