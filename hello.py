@@ -10,4 +10,4 @@ print("hello")
 def calculate(num1=0,num2=1):
     return f"answer:  {num1 + num2}"
 
-fire.Fire(calculate)
+fire.Fire(hello)
