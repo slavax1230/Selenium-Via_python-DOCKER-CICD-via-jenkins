@@ -21,7 +21,7 @@ pipeline {
                 echo "Testing.."
                 sh '''                   
                 python3 hello.py
-                python3 hello.py --name=my-name-is
+                python3 hello.py --num1=2 --num2=2
                 '''
             }
         }
