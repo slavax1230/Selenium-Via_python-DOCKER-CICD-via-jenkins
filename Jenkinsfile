@@ -19,7 +19,8 @@ pipeline {
         stage('Test') {
             steps {
                 echo "Testing.."
-                sh '''               
+                sh '''     
+                pip install fire              
                 python3 hello.py
                 python3 hello.py --name=my-name-is
                 '''
